@@ -112,11 +112,16 @@ export function HymnDashboard({
   }, [existingNumbers]);
 
   const allCategories = useMemo(() => {
+    const list: string[] = [...DEFAULT_CATEGORIES];
     const set = new Set<string>(DEFAULT_CATEGORIES);
     hymns.forEach((h) => {
-      if (h.category.trim()) set.add(h.category.trim());
+      const cat = h.category.trim();
+      if (cat && !set.has(cat)) {
+        set.add(cat);
+        list.push(cat);
+      }
     });
-    return Array.from(set).sort((a, b) => a.localeCompare(b));
+    return list;
   }, [hymns]);
 
   const stats = useMemo(() => {

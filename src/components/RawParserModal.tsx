@@ -14,7 +14,7 @@ import { Hymn } from "@/lib/types";
 
 const EXAMPLE_RAW_TEXT = `BHB 1
 Title: Gbogbo Aye, E Gborin Soke
-Category: Iyin ati Ope
+Category: Orin Ope ati Iyin
 
 1. Gbogbo aye, e gborin soke,
 E fi ayo yin Oluwa;
@@ -32,7 +32,7 @@ Amin.
 
 BHB 2
 Title: Ope Fun Oluwa, E Korin Idunnu
-Category: Iyin ati Ope
+Category: Orin Ope ati Iyin
 
 1. Ope fun Oluwa, e korin idunnu,
 Nitori aanu Re duro lailai;
