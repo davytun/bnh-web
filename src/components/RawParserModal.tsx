@@ -235,7 +235,16 @@ export function RawParserModal({
                         <span>•</span>
                         <span>Chorus: {item.hymn.chorus ? "Yes" : "None"}</span>
                         <span>•</span>
-                        <span>Amen: {item.hymn.amen ?? "null"}</span>
+                        <span>
+                          Ending:{" "}
+                          {item.hymn.amen ? (
+                            <strong className="text-indigo-600 dark:text-indigo-400 font-mono">
+                              {item.hymn.amen}
+                            </strong>
+                          ) : (
+                            <em className="text-slate-400">None (null)</em>
+                          )}
+                        </span>
                         {alreadyExists && (
                           <span className="rounded bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 px-1.5 py-0.5 font-medium">
                             Exists in DB

@@ -36,8 +36,17 @@ export function normalizeHymn(input: Partial<Hymn>): Hymn {
   const title = typeof input.title === "string" ? input.title.trim() : "";
   const category = typeof input.category === "string" ? input.category.trim() : "";
 
-  const rawAmen = typeof input.amen === "string" ? input.amen.trim() : "";
-  const amen = rawAmen.length > 0 ? rawAmen : null;
+  let amen: string | null = null;
+  if (typeof input.amen === "string") {
+    const trimmed = input.amen.trim();
+    if (
+      trimmed.length > 0 &&
+      trimmed.toLowerCase() !== "null" &&
+      trimmed.toLowerCase() !== "none"
+    ) {
+      amen = trimmed;
+    }
+  }
 
   const rawChorus = typeof input.chorus === "string" ? normalizeLyricsBlock(input.chorus) : "";
   const chorus = rawChorus.length > 0 ? rawChorus : null;

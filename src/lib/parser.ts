@@ -6,11 +6,12 @@ const HYMN_HEADER_RE =
 const BARE_NUMBER_RE = /^(\d{1,3})\s*$/;
 const TITLE_LINE_RE = /^Title\s*:\s*(.+)$/i;
 const CATEGORY_LINE_RE = /^Category\s*:\s*(.+)$/i;
-const AMEN_META_RE = /^Amen\s*:\s*(.*)$/i;
+const ENDING_META_RE = /^(?:Amen|Ending|Closing|Ipari|Response)\s*:\s*(.*)$/i;
 const CHORUS_AFTER_META_RE = /^ChorusAfterEachVerse\s*:\s*(true|false|yes|no|1|0)\s*$/i;
 const VERSE_START_RE = /^(?:Verse\s+)?(\d+)[.):]\s*(.*)$/i;
 const CHORUS_START_RE = /^(?:Chorus|Refrain|Egbe)\s*:?\s*(.*)$/i;
-const AMEN_STANDALONE_RE = /^(?:Amin|Amen)\.?\s*$/i;
+const ENDING_STANDALONE_RE =
+  /^(?:(?:Amin|Amen|Alleluia|Haleluya|Hallelujah|Alleluya|Hosanna|Hosana|Ogo ni fun Olorun)(?:[,\s]+(?:Amin|Amen|Alleluia|Haleluya|Hallelujah))?)[.!]?\s*$/i;
 const SEPARATOR_RE = /^[-=]{3,}\s*$/;
 
 /**
@@ -120,10 +121,15 @@ export function parseSingleRawHymn(blockText: string): ParsedHymnResult {
         category = catMatch[1].trim();
         continue;
       }
-      const amenMetaMatch = trimmed.match(AMEN_META_RE);
-      if (amenMetaMatch) {
-        const val = amenMetaMatch[1].trim();
-        amen = val.length > 0 ? val : null;
+      const endingMetaMatch = trimmed.match(ENDING_META_RE);
+      if (endingMetaMatch) {
+        const val = endingMetaMatch[1].trim();
+        amen =
+          val.length > 0 &&
+          val.toLowerCase() !== "none" &&
+          val.toLowerCase() !== "null"
+            ? val
+            : null;
         continue;
       }
       const chorusAfterMatch = trimmed.match(CHORUS_AFTER_META_RE);
@@ -163,13 +169,30 @@ export function parseSingleRawHymn(blockText: string): ParsedHymnResult {
       continue;
     }
 
-    // Standalone Amen at the end (or after verses/chorus)
-    if (AMEN_STANDALONE_RE.test(trimmed) && (verses.length > 0 || choruses.length > 0)) {
-      // Only treat as Amen if remaining non-empty lines are empty
+    // Explicit Ending/Amen line (e.g. "Ending: Alleluia, Amin." or "Amen: None")
+    const explicitEndingMatch = trimmed.match(ENDING_META_RE);
+    if (explicitEndingMatch && (verses.length > 0 || choruses.length > 0)) {
       const hasMoreContent = lines.slice(i + 1).some((l) => l.trim().length > 0);
       if (!hasMoreContent) {
         flushChorus();
-        amen = trimmed.endsWith(".") ? trimmed : `${trimmed}.`;
+        const val = explicitEndingMatch[1].trim();
+        amen =
+          val.length > 0 &&
+          val.toLowerCase() !== "none" &&
+          val.toLowerCase() !== "null"
+            ? val
+            : null;
+        break;
+      }
+    }
+
+    // Standalone Ending/Amen at the end (or after verses/chorus)
+    if (ENDING_STANDALONE_RE.test(trimmed) && (verses.length > 0 || choruses.length > 0)) {
+      // Only treat as Ending if remaining non-empty lines are empty
+      const hasMoreContent = lines.slice(i + 1).some((l) => l.trim().length > 0);
+      if (!hasMoreContent) {
+        flushChorus();
+        amen = /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
         break;
       }
     }
@@ -309,7 +332,8 @@ export function parseCsvHymns(csvText: string): ParsedHymnResult[] {
     const number = Number.parseInt(get("number"), 10) || 0;
     const title = get("title");
     const category = get("category");
-    const amenRaw = get("amen");
+    const amenRaw =
+      get("amen") || get("ending") || get("closing") || get("response");
     const chorusRaw = get("chorus");
     const chorusAfterRaw = get("chorusaftereachverse").toLowerCase();
     const chorusAfterEachVerse =

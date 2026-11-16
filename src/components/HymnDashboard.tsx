@@ -533,9 +533,12 @@ export function HymnDashboard({
                     <th className="py-3 pl-5 pr-3 w-20">#</th>
                     <th className="py-3 px-3">Title</th>
                     <th className="py-3 px-3 hidden sm:table-cell">Category</th>
-                    <th className="py-3 px-3 w-24 text-center">Verses</th>
-                    <th className="py-3 px-3 hidden md:table-cell w-28 text-center">
+                    <th className="py-3 px-3 w-20 text-center">Verses</th>
+                    <th className="py-3 px-3 hidden md:table-cell w-24 text-center">
                       Chorus
+                    </th>
+                    <th className="py-3 px-3 hidden lg:table-cell w-32 text-center">
+                      Ending
                     </th>
                     <th className="py-3 px-3 w-32">Status</th>
                     <th className="py-3 pl-3 pr-5 w-28 text-right">Actions</th>
@@ -573,6 +576,15 @@ export function HymnDashboard({
                               ? "Repeat"
                               : "Once"
                             : "—"}
+                        </td>
+                        <td className="py-3 px-3 text-center text-xs hidden lg:table-cell">
+                          {h.amen ? (
+                            <span className="font-mono text-[11px] font-medium rounded-md bg-slate-100 dark:bg-zinc-800 text-slate-700 dark:text-zinc-300 px-2 py-0.5">
+                              {h.amen}
+                            </span>
+                          ) : (
+                            <span className="text-[11px] text-slate-400 italic">None</span>
+                          )}
                         </td>
                         <td className="py-3 px-3">
                           <span
@@ -662,6 +674,7 @@ export function HymnDashboard({
                     <span className="font-mono">
                       {h.verses.length} verse{h.verses.length === 1 ? "" : "s"}
                       {h.chorus ? " • Chorus" : ""}
+                      {h.amen ? ` • ${h.amen}` : ""}
                     </span>
                     <div className="flex items-center gap-1">
                       <button

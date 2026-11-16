@@ -48,7 +48,7 @@ export function HymnEditorModal({
     initialHymn?.category ?? DEFAULT_CATEGORIES[0]
   );
   const [customCategoryMode, setCustomCategoryMode] = useState(false);
-  const [amen, setAmen] = useState(initialHymn?.amen ?? "Amin.");
+  const [amen, setAmen] = useState(initialHymn?.amen ?? "");
   const [chorus, setChorus] = useState(initialHymn?.chorus ?? "");
   const [chorusAfterEachVerse, setChorusAfterEachVerse] = useState(
     initialHymn?.chorusAfterEachVerse ?? false
@@ -249,73 +249,119 @@ export function HymnEditorModal({
               </div>
             </div>
 
-            {/* Category & Amen */}
-            <div className="grid grid-cols-1 sm:grid-cols-12 gap-4">
-              <div className="sm:col-span-7">
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-medium text-slate-700 dark:text-zinc-300">
-                    Category
-                  </label>
-                  <button
-                    type="button"
-                    onClick={() => setCustomCategoryMode((m) => !m)}
-                    className="text-[11px] font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
-                  >
-                    {customCategoryMode ? "Choose from list" : "+ Custom category"}
-                  </button>
-                </div>
-                {customCategoryMode ? (
-                  <input
-                    type="text"
-                    placeholder="Enter custom category..."
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
-                  />
-                ) : (
-                  <select
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
-                    className="w-full rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
-                  >
-                    {mergedCategories.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
-                      </option>
-                    ))}
-                  </select>
-                )}
+            {/* Category */}
+            <div>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-medium text-slate-700 dark:text-zinc-300">
+                  Category
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setCustomCategoryMode((m) => !m)}
+                  className="text-[11px] font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
+                >
+                  {customCategoryMode ? "Choose from list" : "+ Custom category"}
+                </button>
               </div>
-
-              <div className="sm:col-span-5">
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-medium text-slate-700 dark:text-zinc-300">
-                    Amen (optional)
-                  </label>
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setAmen("Amin.")}
-                      className="text-[11px] text-indigo-600 dark:text-indigo-400 hover:underline"
-                    >
-                      Amin.
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAmen("")}
-                      className="text-[11px] text-slate-500 hover:underline"
-                    >
-                      None
-                    </button>
-                  </div>
-                </div>
+              {customCategoryMode ? (
                 <input
                   type="text"
-                  placeholder="Leave empty for null"
-                  value={amen}
-                  onChange={(e) => setAmen(e.target.value)}
+                  placeholder="Enter custom category..."
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
                   className="w-full rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
                 />
+              ) : (
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                >
+                  {mergedCategories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+
+            {/* Ending / Closing Response (Amen, Alleluia, etc.) */}
+            <div className="rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-50/60 dark:bg-zinc-950/40 p-4 space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div>
+                  <label className="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-zinc-400">
+                    Closing Response / Ending (Optional)
+                  </label>
+                  <p className="text-[11px] text-slate-500 dark:text-zinc-400">
+                    Could be <em>Amin.</em>, <em>Alleluia.</em>, <em>Alleluia, Amin.</em>, <em>Haleluya.</em>, custom, or none.
+                  </p>
+                </div>
+                <span
+                  className={`text-[11px] font-mono px-2 py-0.5 rounded-md border ${
+                    amen.trim().length > 0
+                      ? "bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-800"
+                      : "bg-slate-100 text-slate-500 border-slate-200 dark:bg-zinc-800 dark:text-zinc-400 dark:border-zinc-700"
+                  }`}
+                >
+                  {amen.trim().length > 0
+                    ? `JSON amen: "${amen.trim()}"`
+                    : "JSON amen: null (No ending)"}
+                </span>
+              </div>
+
+              {/* Quick Fill Pills */}
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-[11px] text-slate-500 dark:text-zinc-400 mr-1">
+                  Quick fill:
+                </span>
+                {[
+                  { label: "None (null)", val: "" },
+                  { label: "Amin.", val: "Amin." },
+                  { label: "Alleluia.", val: "Alleluia." },
+                  { label: "Alleluia, Amin.", val: "Alleluia, Amin." },
+                  { label: "Haleluya.", val: "Haleluya." },
+                  { label: "Haleluya, Amin.", val: "Haleluya, Amin." },
+                  { label: "Hosanna.", val: "Hosanna." },
+                ].map((item) => {
+                  const isActive =
+                    item.val === ""
+                      ? amen.trim().length === 0
+                      : amen.trim().toLowerCase() === item.val.toLowerCase();
+                  return (
+                    <button
+                      key={item.label}
+                      type="button"
+                      onClick={() => setAmen(item.val)}
+                      className={`rounded-lg px-2.5 py-1 text-xs font-medium transition ${
+                        isActive
+                          ? "bg-indigo-600 text-white shadow-xs"
+                          : "border border-slate-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800"
+                      }`}
+                    >
+                      {item.label}
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Type any custom ending text or choose a quick fill above (leave empty for null)..."
+                  value={amen}
+                  onChange={(e) => setAmen(e.target.value)}
+                  className="w-full rounded-lg border border-slate-300 dark:border-zinc-700 bg-white dark:bg-zinc-950 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/30 pr-16"
+                />
+                {amen.trim().length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setAmen("")}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-xs font-medium text-slate-400 hover:text-slate-700 dark:hover:text-zinc-200"
+                  >
+                    Clear
+                  </button>
+                )}
               </div>
             </div>
 

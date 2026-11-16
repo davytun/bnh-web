@@ -37,13 +37,22 @@ export function HymnPreviewModal({
         {/* Header */}
         <div className="flex items-start justify-between gap-3 border-b border-slate-200 dark:border-zinc-800 px-5 py-4">
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <span className="font-mono text-xs font-bold px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-800 dark:bg-indigo-950/70 dark:text-indigo-300">
                 BHB {hymn.number}
               </span>
               <span className="text-xs text-slate-500 dark:text-zinc-400">
                 {hymn.category}
               </span>
+              {hymn.amen ? (
+                <span className="font-mono text-[11px] rounded bg-slate-100 dark:bg-zinc-800 px-1.5 py-0.5 text-slate-600 dark:text-zinc-400">
+                  Ending: {hymn.amen}
+                </span>
+              ) : (
+                <span className="text-[11px] italic text-slate-400">
+                  (No ending)
+                </span>
+              )}
             </div>
             <h2 className="mt-1 text-lg font-semibold tracking-tight truncate">
               {hymn.title}
